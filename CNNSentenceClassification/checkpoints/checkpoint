@@ -1,0 +1,6 @@
+model_checkpoint_path: "cnn-960"
+all_model_checkpoint_paths: "cnn-920"
+all_model_checkpoint_paths: "cnn-930"
+all_model_checkpoint_paths: "cnn-940"
+all_model_checkpoint_paths: "cnn-950"
+all_model_checkpoint_paths: "cnn-960"

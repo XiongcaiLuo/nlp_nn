@@ -1,0 +1,9 @@
+*.pyc
+*.o
+.DS_Store
+*.swp
+*.log
+*ipynb*
+.git
+*.gitkeep
+.idea/**/*
