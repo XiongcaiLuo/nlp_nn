@@ -20,7 +20,6 @@ class CNNTextModel(object):
         self.max_seq_length = max_seq_length
         self.num_classes = num_classes
 
-        self.batch_size = batch_size
         self.embedding_size = embedding_size
         self.num_filters = num_filters
         self.filter_widths = filter_widths
@@ -131,9 +130,9 @@ class CNNTextModel(object):
             tf.summary.scalar('grad_norm', self.grad_norm)
             for g,v in self.clipped_grads_and_vars:
                 if g is not None:
-                    tf.summary.histogram('{}/clipped_grad_hist'.format(v.name), g)
+                    tf.summary.histogram('{}/clipped_grad'.format(v.name), g)
             for weight in tf.trainable_variables():
-                tf.summary.histogram('{}/grad'.format(weight.name), weight)
+                tf.summary.histogram('{}/weight'.format(weight.name), weight)
             self.summary_op =  tf.summary.merge_all()
 
     def build_graph(self):
