@@ -24,15 +24,15 @@ flags.DEFINE_string('embedding_init_type', 'new',
                     'Initializing type for embed matrix, random|new|pretrained|google_w2c')
 
 flags.DEFINE_integer('embedding_size', 300, 'Dimensionality of embedding vector (default: 300)')
-flags.DEFINE_integer('dropout_keep_prob', 0.5, 'Dropout keep probability (default: 0.5)')
+flags.DEFINE_integer('dropout_keep_prob', 0.4, 'Dropout keep probability (default: 0.4)')
 flags.DEFINE_string('num_filters', '10,10,10',
                     'Number of filters corresponding to each filter_width (default: 10,10,10)')
-flags.DEFINE_string('filter_widths', '3,4,5',
-                    'Width of filter or sliding context window (default: 3,4,5)')
+flags.DEFINE_string('filter_widths', '4,5,6',
+                    'Width of filter or sliding context window (default: 4,5,6)')
 
 
 flags.DEFINE_integer('batch_size', 100, 'Batch size (default: 50)')
-flags.DEFINE_integer('n_epochs', 100, 'Number of training epochs (default: 20)')
+flags.DEFINE_integer('n_epochs', 20, 'Number of training epochs (default: 20)')
 flags.DEFINE_float('learning_rate', 0.005, 'Learning rate (default: 0.001)')
 flags.DEFINE_float('max_grad_norm', 3.0, 'Maximum gradient norm for clipping gradient (default: 3.0)')
 flags.DEFINE_integer('cpt_skip_step', 10, 'Save checkpoints every this many steps (default: 10)')
@@ -131,6 +131,7 @@ def train(embedding_static, embedding_init_type):
                                    num_filters=num_filters,
                                    filter_widths=filter_widths,
                                    learning_rate=FLAGS.learning_rate,
+                                   max_grad_norm=FLAGS.max_grad_norm,
                                    embedding_static=embedding_static,
                                    embedding_init=embedding_init)
     cnn_model.build_graph()
@@ -152,8 +153,8 @@ def train(embedding_static, embedding_init_type):
         total_loss = 0
         for iteration in range(initial_step, n_batches*FLAGS.n_epochs):
             start = time.time()
-            X_batch, Y_batch = train_batch_gen.next()
-            _, summary, loss_batch = single_step(sess, cnn_model, X_batch, Y_batch, FLAGS.dropout_keep_prob, forward_only=False)
+            X_batch, y_batch = train_batch_gen.next()
+            _, summary, loss_batch = single_step(sess, cnn_model, X_batch, y_batch, FLAGS.dropout_keep_prob, forward_only=False)
 
             train_writer.add_summary(summary, iteration)
             total_loss += loss_batch
@@ -166,7 +167,7 @@ def train(embedding_static, embedding_init_type):
                 saver.save(sess, os.path.join(FLAGS.cpt_path, 'cnn'), global_step=cnn_model.global_step)
             if ((iteration+1) % FLAGS.cpt_skip_step == 0) or (iteration == n_batches*FLAGS.n_epochs - 1):
                 # Run evals on development set and print their loss
-                _eval_test_set(sess, cnn_model, (X_train, y_train), None, iteration)         # just for tuning, eval on the train dataset
+                _eval_test_set(sess, cnn_model, (X_batch, y_batch), None, iteration)
                 _eval_test_set(sess, cnn_model, (X_test, y_test), test_writer, iteration)
 
 
@@ -184,7 +185,6 @@ def main(_argv):
 
     if not os.path.exists(FLAGS.graph_path+'/train'):
         os.makedirs(FLAGS.graph_path+'/test')
-
     train(FLAGS.embedding_static, FLAGS.embedding_init_type)
 
 

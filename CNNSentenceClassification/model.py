@@ -23,7 +23,7 @@ class CNNTextModel(object):
         self.embedding_size = embedding_size
         self.num_filters = num_filters
         self.filter_widths = filter_widths
-        assert(len(num_filters)==len(filter_widths))
+        assert len(num_filters)==len(filter_widths), 'filter parameters not match'
 
         self.lr = learning_rate
         self.max_grad_norm = max_grad_norm
