@@ -1,6 +1,0 @@
-model_checkpoint_path: "cnn-840"
-all_model_checkpoint_paths: "cnn-800"
-all_model_checkpoint_paths: "cnn-810"
-all_model_checkpoint_paths: "cnn-820"
-all_model_checkpoint_paths: "cnn-830"
-all_model_checkpoint_paths: "cnn-840"
